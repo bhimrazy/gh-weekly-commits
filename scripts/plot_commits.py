@@ -1,4 +1,4 @@
-from src.ghweekly.main import fetch_weekly_commits
+from ghweekly.main import fetch_weekly_commits
 import matplotlib.pyplot as plt
 from datetime import datetime
 
@@ -36,5 +36,8 @@ for patch in ax.patches:
 
 ax.set_xticklabels([d.strftime('%Y-%m-%d') for d in df.index], rotation=45, ha='right')
 plt.title(f'Weekly GitHub Contributions by Repo ({USERNAME})', fontsize=16, pad=20)
+plt.xlabel('Start of the week (Monday)')
+plt.ylabel('Merged Commits')
 plt.tight_layout()
+plt.savefig('weekly_commits.png', dpi=300)
 plt.show()

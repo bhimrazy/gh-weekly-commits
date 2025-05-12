@@ -9,12 +9,6 @@
 
 ## Installation
 
-Install directly from the repository:
-
-```bash
-pip install git+https://github.com/your-username/gh-weekly-commits.git
-```
-
 ```bash
 pip install -r requirements.txt
 ```
