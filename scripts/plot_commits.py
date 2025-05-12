@@ -1,6 +1,7 @@
 from ghweekly.main import fetch_weekly_commits
 import matplotlib.pyplot as plt
 from datetime import datetime
+import os
 
 USERNAME = "bhimrazy"
 REPOS = [
@@ -10,7 +11,9 @@ REPOS = [
     "Lightning-AI/LitModels",
     "Lightning-AI/pytorch-lightning",
 ]
-HEADERS = {}
+
+GH_TOKEN = os.getenv("GH_TOKEN")
+HEADERS = {'Authorization': f'token {GH_TOKEN}'} if GH_TOKEN else {}
 
 START = datetime(2025, 1, 1)
 END = datetime.now()
