@@ -28,6 +28,9 @@ jobs:
         pip install -r requirements.txt
         pip install ruff
 
+    - name: Install package in editable mode
+      run: pip install -e .
+
     - name: Run linting
       run: ruff check src/ tests/
 
