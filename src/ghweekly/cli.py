@@ -55,5 +55,8 @@ def main():
             [d.strftime("%Y-%m-%d") for d in df.index], rotation=45, ha="right"
         )
         plt.title(f"Weekly GitHub Contributions by Repo ({args.username})")
+        plt.xlabel("Start of the week (Monday)")
+        plt.ylabel("Merged Commits")
         plt.tight_layout()
+        plt.savefig("weekly_commits.png", dpi=300)
         plt.show()
