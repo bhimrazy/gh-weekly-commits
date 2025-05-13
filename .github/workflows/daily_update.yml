@@ -3,9 +3,6 @@ name: Daily Update Weekly Commits
 on:
   schedule:
     - cron: "0 0 * * *" # Runs daily at midnight UTC
-  push:
-    branches:
-      - main
 
 jobs:
   update-weekly-commits:
