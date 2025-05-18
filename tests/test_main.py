@@ -15,6 +15,17 @@ def mock_data():
     }
 
 
+def test_fetch_weekly_commits_empty_repos():
+    df = fetch_weekly_commits(
+        username="testuser",
+        repos=[],
+        start=datetime(2025, 1, 1),
+        end=datetime(2025, 5, 1),
+        headers={},
+    )
+    assert isinstance(df, pd.DataFrame)
+    assert df.empty
+
 def test_fetch_weekly_commits(mock_data):
     df = fetch_weekly_commits(
         username=mock_data["username"],
@@ -25,3 +36,7 @@ def test_fetch_weekly_commits(mock_data):
     )
     assert isinstance(df, pd.DataFrame)
     assert list(df.columns) == ["repo1", "repo2"]
+    # Check index is a DatetimeIndex
+    assert isinstance(df.index, pd.DatetimeIndex)
+    # Check all values are integers (or 0)
+    assert df.applymap(lambda x: isinstance(x, (int, float))).all().all()
