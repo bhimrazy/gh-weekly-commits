@@ -46,6 +46,7 @@ def main():
 
     print(df)
 
+    # generate plots
     if args.plot:
         ax = df.plot(
             kind="bar", stacked=True, figsize=(14, 6), colormap="tab20", width=0.8
