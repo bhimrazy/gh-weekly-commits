@@ -1,5 +1,9 @@
 # gh-weekly-commits
 
+[![CI](https://github.com/bhimrazy/gh-weekly-commits/actions/workflows/ci.yml/badge.svg)](https://github.com/bhimrazy/gh-weekly-commits/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/bhimrazy/gh-weekly-commits/graph/badge.svg)](https://codecov.io/gh/bhimrazy/gh-weekly-commits)
+[![license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/bhimrazy/gh-weekly-commits/blob/main/LICENSE)
+
 📊 Visualize your weekly GitHub contributions across multiple repositories.
 
 ## Features
