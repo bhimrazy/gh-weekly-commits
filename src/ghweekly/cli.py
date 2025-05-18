@@ -1,7 +1,4 @@
 import argparse
-from datetime import datetime
-from ghweekly.main import fetch_weekly_commits
-import matplotlib.pyplot as plt
 
 
 def main():
@@ -18,7 +15,7 @@ def main():
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument(
         "--end",
-        default=datetime.now().strftime("%Y-%m-%d"),
+        default=None,
         help="End date (YYYY-MM-DD)",
     )
     parser.add_argument(
@@ -28,12 +25,22 @@ def main():
 
     args = parser.parse_args()
 
+    # Only import heavy modules after parsing args for fast help/parse
+    from datetime import datetime
+
+    from ghweekly.main import fetch_weekly_commits
+
+    # Only import matplotlib if plotting is requested
+    if args.plot:
+        import matplotlib.pyplot as plt
+
+    end_date = args.end or datetime.now().strftime("%Y-%m-%d")
     headers = {"Authorization": f"token {args.token}"} if args.token else {}
     df = fetch_weekly_commits(
         username=args.username,
         repos=args.repos,
         start=datetime.fromisoformat(args.start),
-        end=datetime.fromisoformat(args.end),
+        end=datetime.fromisoformat(end_date),
         headers=headers,
     )
 
@@ -60,3 +67,7 @@ def main():
         plt.tight_layout()
         plt.savefig("weekly_commits.png", dpi=300)
         plt.show()
+
+
+if __name__ == "__main__":
+    main()
