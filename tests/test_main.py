@@ -1,8 +1,7 @@
 import pytest
-from ghweekly.main import fetch_weekly_commits
-from datetime import datetime
 import pandas as pd
-
+from datetime import datetime
+from ghweekly.main import fetch_weekly_commits
 
 @pytest.fixture
 def mock_data():
@@ -14,6 +13,13 @@ def mock_data():
         "headers": {},
     }
 
+class MockResponse:
+    def __init__(self, status_code=200, json_data=None):
+        self.status_code = status_code
+        self._json_data = json_data or []
+
+    def json(self):
+        return self._json_data
 
 def test_fetch_weekly_commits_empty_repos():
     df = fetch_weekly_commits(
@@ -36,7 +42,21 @@ def test_fetch_weekly_commits(mock_data):
     )
     assert isinstance(df, pd.DataFrame)
     assert list(df.columns) == ["repo1", "repo2"]
-    # Check index is a DatetimeIndex
     assert isinstance(df.index, pd.DatetimeIndex)
-    # Check all values are integers (or 0)
     assert df.applymap(lambda x: isinstance(x, (int, float))).all().all()
+
+def test_fetch_weekly_commits_error(monkeypatch):
+    def mock_get(*args, **kwargs):
+        return MockResponse(status_code=403)
+    monkeypatch.setattr("requests.get", mock_get)
+    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {})
+    assert isinstance(df, pd.DataFrame)
+    assert (df == 0).all().all()
+
+def test_fetch_weekly_commits_no_commits(monkeypatch):
+    def mock_get(*args, **kwargs):
+        return MockResponse(status_code=200, json_data=[])
+    monkeypatch.setattr("requests.get", mock_get)
+    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {})
+    assert isinstance(df, pd.DataFrame)
+    assert (df == 0).all().all()
