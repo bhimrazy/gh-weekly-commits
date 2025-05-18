@@ -1,8 +1,7 @@
 import subprocess
 import sys
-import os
-import pytest
 from pathlib import Path
+
 
 def test_cli_help():
     result = subprocess.run([sys.executable, '-m', 'ghweekly.cli', '--help'], capture_output=True, text=True)
