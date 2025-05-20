@@ -2,9 +2,9 @@ name: Daily Update Weekly Commits
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Runs daily at midnight UTC
+    - cron: "0 * * * *" # Runs every hour at minute 0
 
-jobs:
+  jobs:
   update-weekly-commits:
     runs-on: ubuntu-latest
 
