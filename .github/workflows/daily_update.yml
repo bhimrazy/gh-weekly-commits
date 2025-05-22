@@ -38,10 +38,10 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
           git add weekly_commits.png
           if ! git diff --cached --quiet; then
             git commit -m "Update weekly commits image"
+            git pull --rebase
             git push
           else
             echo "No changes to commit"
