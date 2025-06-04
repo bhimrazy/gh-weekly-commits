@@ -46,7 +46,7 @@ python scripts/plot_commits.py
 
 The latest weekly commits visualization is updated daily and can be found below:
 
-![Weekly Commits](./weekly_commits.png)
+![Weekly Commits](https://raw.githubusercontent.com/bhimrazy/gh-weekly-commits/refs/heads/main/weekly_commits.png)
 
 ## Development
 
