@@ -24,7 +24,7 @@ def fetch_commits_for_repo(
     retry_delay: float = 1.0,
 ) -> List[datetime]:
     """Fetch commit dates for a single repository.
-    
+
     Args:
         full_repo: Repository name in 'owner/repo' format
         username: GitHub username to filter commits by
@@ -33,10 +33,10 @@ def fetch_commits_for_repo(
         headers: HTTP headers for API requests
         max_retries: Maximum number of retries for failed requests
         retry_delay: Delay between retries in seconds
-        
+
     Returns:
         List of commit dates
-        
+
     Raises:
         APIError: If GitHub API returns an error
         NetworkError: If network request fails
@@ -44,7 +44,7 @@ def fetch_commits_for_repo(
     commit_dates: List[datetime] = []
     page = 1
     max_pages = 100  # Safety limit to prevent infinite loops
-    
+
     while page <= max_pages:
         logger.debug(f"Fetching page {page} for {full_repo}")
         resp = None
@@ -65,21 +65,27 @@ def fetch_commits_for_repo(
                 break
             except requests.exceptions.RequestException as e:
                 if attempt == max_retries:
-                    logger.error(f"Network error fetching {full_repo} after {max_retries} retries: {e}")
+                    logger.error(
+                        f"Network error fetching {full_repo} after {max_retries} retries: {e}"
+                    )
                     raise NetworkError(f"Failed to fetch data for {full_repo}: {e}")
-                logger.warning(f"Retry {attempt + 1}/{max_retries} for {full_repo}: {e}")
+                logger.warning(
+                    f"Retry {attempt + 1}/{max_retries} for {full_repo}: {e}"
+                )
                 time.sleep(retry_delay)
-        
+
         # If resp is still None after all retries, something went wrong
         if resp is None:
             logger.error(f"Failed to get response for {full_repo}")
             break
-        
+
         if resp.status_code == 404:
             logger.warning(f"Repository not found or not accessible: {full_repo}")
             break
         elif resp.status_code == 403:
-            logger.warning(f"Rate limit or access denied for {full_repo}: {resp.status_code}")
+            logger.warning(
+                f"Rate limit or access denied for {full_repo}: {resp.status_code}"
+            )
             break
         elif resp.status_code != 200:
             logger.error(f"API error fetching {full_repo}: HTTP {resp.status_code}")
@@ -91,9 +97,11 @@ def fetch_commits_for_repo(
         except ValueError as e:
             logger.error(f"Invalid JSON response for {full_repo}: {e}")
             break
-            
+
         if not data:
-            logger.debug(f"No more data on page {page}, ending pagination for {full_repo}")
+            logger.debug(
+                f"No more data on page {page}, ending pagination for {full_repo}"
+            )
             break
 
         for commit in data:
@@ -108,7 +116,7 @@ def fetch_commits_for_repo(
                 continue
 
         page += 1
-        
+
         # Respect rate limits
         if not headers or "Authorization" not in headers:
             time.sleep(0.1)  # Small delay for unauthenticated requests
@@ -125,29 +133,29 @@ def fetch_weekly_commits(
     headers: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """Fetch weekly commit data for multiple repositories.
-    
+
     Args:
         username: GitHub username to filter commits by
         repos: List of repository names in 'owner/repo' format
         start: Start date for commit search
         end: End date for commit search
         headers: HTTP headers for API requests (e.g., for authentication)
-        
+
     Returns:
         DataFrame with weekly commit counts, indexed by week start date
-        
+
     Raises:
         ValidationError: If input parameters are invalid
     """
     # Validate inputs
     if not username or not username.strip():
         raise ValidationError("Username cannot be empty")
-    
+
     if end < start:
         raise ValidationError("End date must be after start date")
-    
+
     validate_repo_format(repos)
-    
+
     # Calculate week boundaries
     offset_start = (0 - start.weekday()) % 7
     first_monday = pd.Timestamp(start) + pd.Timedelta(days=offset_start)
@@ -156,21 +164,23 @@ def fetch_weekly_commits(
     last_monday = pd.Timestamp(end) + pd.Timedelta(days=offset_end)
 
     weeks = pd.date_range(start=first_monday, end=last_monday, freq="7D")
-    
+
     # Initialize DataFrame
     repo_short_names = [get_repo_short_name(repo) for repo in repos]
     df = pd.DataFrame(0, index=weeks, columns=repo_short_names)
 
-    logger.info(f"Fetching commits for {len(repos)} repositories from {start.date()} to {end.date()}")
+    logger.info(
+        f"Fetching commits for {len(repos)} repositories from {start.date()} to {end.date()}"
+    )
 
     for full_repo in repos:
         short_name = get_repo_short_name(full_repo)
-        
+
         try:
             commit_dates = fetch_commits_for_repo(
                 full_repo, username, start, end, headers
             )
-            
+
             if commit_dates:
                 # Create series and resample to weekly
                 s = pd.Series(1, index=pd.to_datetime(commit_dates))
@@ -179,7 +189,7 @@ def fetch_weekly_commits(
                 df[short_name] = weekly
             else:
                 logger.info(f"No commits found for {full_repo}")
-                
+
         except (APIError, NetworkError) as e:
             logger.error(f"Failed to fetch data for {full_repo}: {e}")
             # Continue with other repositories

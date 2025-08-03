@@ -50,7 +50,7 @@ def test_setup_logging_handler_not_duplicated():
     """Test that handlers are not duplicated on multiple calls."""
     logger1 = setup_logging()
     initial_handler_count = len(logger1.handlers)
-    
+
     logger2 = setup_logging()
     assert len(logger2.handlers) == initial_handler_count
     assert logger1 is logger2  # Should return the same logger instance
@@ -61,7 +61,7 @@ def test_validate_repo_format_valid():
     """Test valid repository formats."""
     valid_repos = [
         "owner/repo",
-        "github/octocat", 
+        "github/octocat",
         "Lightning-AI/litdata",
         "123/456",
         "user-name/repo-name",
@@ -73,37 +73,49 @@ def test_validate_repo_format_valid():
 
 def test_validate_repo_format_invalid_no_slash():
     """Test invalid format without slash."""
-    with pytest.raises(ValidationError, match="Invalid repository format.*Expected 'owner/repo'"):
+    with pytest.raises(
+        ValidationError, match="Invalid repository format.*Expected 'owner/repo'"
+    ):
         validate_repo_format(["owner"])
 
 
 def test_validate_repo_format_invalid_empty_owner():
     """Test invalid format with empty owner."""
-    with pytest.raises(ValidationError, match="Invalid repository format.*Expected 'owner/repo'"):
+    with pytest.raises(
+        ValidationError, match="Invalid repository format.*Expected 'owner/repo'"
+    ):
         validate_repo_format(["/repo"])
 
 
 def test_validate_repo_format_invalid_empty_repo():
     """Test invalid format with empty repo name."""
-    with pytest.raises(ValidationError, match="Invalid repository format.*Expected 'owner/repo'"):
+    with pytest.raises(
+        ValidationError, match="Invalid repository format.*Expected 'owner/repo'"
+    ):
         validate_repo_format(["owner/"])
 
 
 def test_validate_repo_format_invalid_empty_string():
     """Test invalid format with empty string."""
-    with pytest.raises(ValidationError, match="Invalid repository format.*Expected 'owner/repo'"):
+    with pytest.raises(
+        ValidationError, match="Invalid repository format.*Expected 'owner/repo'"
+    ):
         validate_repo_format([""])
 
 
 def test_validate_repo_format_invalid_too_many_parts():
     """Test invalid format with too many parts."""
-    with pytest.raises(ValidationError, match="Invalid repository format.*Expected 'owner/repo'"):
+    with pytest.raises(
+        ValidationError, match="Invalid repository format.*Expected 'owner/repo'"
+    ):
         validate_repo_format(["owner/repo/extra"])
 
 
 def test_validate_repo_format_invalid_whitespace_only():
     """Test invalid format with only whitespace."""
-    with pytest.raises(ValidationError, match="Invalid repository format.*Expected 'owner/repo'"):
+    with pytest.raises(
+        ValidationError, match="Invalid repository format.*Expected 'owner/repo'"
+    ):
         validate_repo_format([" / "])
 
 
@@ -130,7 +142,7 @@ def test_validate_repo_format_whitespace_in_parts():
     """Test repo format with whitespace in parts."""
     with pytest.raises(ValidationError):
         validate_repo_format(["owner /repo"])
-    
+
     with pytest.raises(ValidationError):
         validate_repo_format(["owner/ repo"])
 
