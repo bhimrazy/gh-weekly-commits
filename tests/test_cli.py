@@ -65,6 +65,23 @@ def test_cli_plot(monkeypatch, tmp_path):
     assert os.path.exists("weekly_commits.png")
 
 
+def test_cli_default_start(monkeypatch):
+    monkeypatch.setenv("GH_TOKEN", "dummy")
+    script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--username", "testuser",
+            "--repos", "org/repo1",
+            "--end", "2025-05-01"
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert "repo1" in result.stdout
+
 def test_cli_missing_args():
     script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
     result = subprocess.run(

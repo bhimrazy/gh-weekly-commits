@@ -12,7 +12,14 @@ def main():
         required=True,
         help="List of GitHub repositories (org/repo)",
     )
-    parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
+    from datetime import datetime
+    current_year_start = f"{datetime.now().year}-01-01"
+    parser.add_argument(
+        "--start",
+        required=False,
+        default=current_year_start,
+        help=f"Start date (YYYY-MM-DD), default: {current_year_start}"
+    )
     parser.add_argument(
         "--end",
         default=None,
