@@ -1,6 +1,6 @@
 [project]
 name = "ghweekly"
-version = "0.1.4"
+version = "0.1.5"
 description = "Visualize weekly GitHub commit activity across repositories."
 authors = [{ name = "Bhimraj Yadav" }]
 license = "MIT"
