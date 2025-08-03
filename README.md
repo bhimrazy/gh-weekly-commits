@@ -13,15 +13,19 @@
 
 ## Installation
 
-You can install the package directly from the GitHub repository:
+This project uses [uv](https://astral.sh/uv) for fast Python dependency management.
 
-```bash
-pip install ghweekly
-```
+1. Install uv (if not already installed):
 
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    curl -Ls https://astral.sh/uv/install.sh | sh
+    ```
+
+2. Install all dependencies:
+
+    ```bash
+    uv sync
+    ```
 
 ## Usage
 
@@ -53,6 +57,7 @@ The latest weekly commits visualization is updated daily and can be found below:
 ### Run Tests
 
 ```bash
+uv pip install pytest
 pytest tests/
 ```
 

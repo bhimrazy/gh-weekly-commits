@@ -19,33 +19,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Install uv and set Python version
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          pip install -U -q build twine
-          pip list
+          enable-cache: true
 
       - name: Build package
-        run: python -m build
+        run: uv build --no-sources
 
-      - name: Check package
-        run: twine check dist/* --strict
-
-      # We do this, since failures on test.pypi aren't that bad
-      #  - name: Publish to Test PyPI
-      #    if: startsWith(github.event.ref, 'refs/tags') || github.event_name == 'release'
-      #    uses: pypa/gh-action-pypi-publish@v1.10.0
-      #    with:
-      #      user: __token__
-      #      password: ${{ secrets.test_pypi_password }}
-      #      repository_url: https://test.pypi.org/legacy/
-
-      - name: Publish distribution 📦 to PyPI
+      - name: Publish package
         if: startsWith(github.event.ref, 'refs/tags') || github.event_name == 'release'
-        uses: pypa/gh-action-pypi-publish@v1.12.4
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.pypi_password }}
+        run: uv publish
