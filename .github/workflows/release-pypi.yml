@@ -33,4 +33,3 @@ jobs:
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.pypi_password }}
         run: uv publish
-

@@ -14,37 +14,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install uv and set Python version ${{ matrix.python-version }}
-      uses: astral-sh/setup-uv@v6
-      with:
-        python-version: ${{ matrix.python-version }}
-        enable-cache: true
+      - name: Install uv and set Python version ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
 
-    - name: Install dependencies
-      run: uv sync --locked --all-extras --dev
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
 
-    - name: Run linting
-      run: uv run ruff check src/ tests/
+      - name: Run linting
+        run: uv run ruff check src/ tests/
 
-    - name: Run Tests
-      timeout-minutes: 5
-      run: uv run pytest --cov=ghweekly src/ tests/ -v -s
+      - name: Run Tests
+        timeout-minutes: 5
+        run: uv run pytest --cov=ghweekly src/ tests/ -v -s
 
-    - name: Statistics
-      run: |
-        uv run coverage report
-        uv run coverage xml
+      - name: Statistics
+        run: |
+          uv run coverage report
+          uv run coverage xml
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
-        flags: unittests
-        env_vars: OS,PYTHON
-        name: codecov-umbrella
-        fail_ci_if_error: false
-        slug: bhimrazy/gh-weekly-commits
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          slug: bhimrazy/gh-weekly-commits
