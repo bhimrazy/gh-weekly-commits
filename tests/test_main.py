@@ -43,7 +43,7 @@ def test_fetch_weekly_commits(mock_data):
     assert isinstance(df, pd.DataFrame)
     assert list(df.columns) == ["repo1", "repo2"]
     assert isinstance(df.index, pd.DatetimeIndex)
-    assert df.applymap(lambda x: isinstance(x, (int, float))).all().all()
+    assert df.map(lambda x: isinstance(x, (int, float))).all().all()
 
 def test_fetch_weekly_commits_error(monkeypatch):
     def mock_get(*args, **kwargs):
