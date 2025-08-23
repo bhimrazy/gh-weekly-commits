@@ -65,6 +65,60 @@ def test_cli_plot(monkeypatch, tmp_path):
     assert os.path.exists("weekly_commits.png")
 
 
+def test_cli_plot_with_total(monkeypatch, tmp_path):
+    # Use a non-interactive backend for matplotlib
+    monkeypatch.setenv("MPLBACKEND", "Agg")
+    monkeypatch.setenv("GH_TOKEN", "dummy")
+    script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--username",
+            "testuser",
+            "--repos",
+            "org/repo1",
+            "--start",
+            "2025-01-01",
+            "--end",
+            "2025-05-01",
+            "--plot",
+            "--show-total",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert "repo1" in result.stdout or "repo1" in result.stderr
+    assert os.path.exists("weekly_commits.png")
+
+
+def test_cli_show_total_without_plot(monkeypatch):
+    # Test that --show-total works when --plot is also specified (should work)
+    # and doesn't crash when --plot is not specified (should just be ignored)
+    monkeypatch.setenv("GH_TOKEN", "dummy")
+    script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--username",
+            "testuser",
+            "--repos",
+            "org/repo1",
+            "--start",
+            "2025-01-01",
+            "--end",
+            "2025-05-01",
+            "--show-total",  # without --plot
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert "repo1" in result.stdout
+
+
 def test_cli_default_start(monkeypatch):
     monkeypatch.setenv("GH_TOKEN", "dummy")
     script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
