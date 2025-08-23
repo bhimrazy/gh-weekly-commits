@@ -29,6 +29,7 @@ def main():
         "--token", help="GitHub token (optional, for higher rate limits)"
     )
     parser.add_argument("--plot", action="store_true", help="Show plot")
+    parser.add_argument("--show-total", action="store_true", help="Show total contributions across all repos (requires --plot)")
 
     args = parser.parse_args()
 
@@ -58,6 +59,24 @@ def main():
         ax = df.plot(
             kind="bar", stacked=True, figsize=(14, 6), colormap="tab20", width=0.8
         )
+        
+        # Add total contributions line if requested
+        if args.show_total:
+            total_contributions = df.sum(axis=1)
+            ax2 = ax.twinx()
+            line = ax2.plot(range(len(df.index)), total_contributions, 
+                          color='red', linewidth=2, marker='o', 
+                          label='Total Contributions')
+            ax2.set_ylabel('Total Contributions', color='red')
+            ax2.tick_params(axis='y', labelcolor='red')
+            
+            # Combine legends from both axes
+            bars_legend = ax.get_legend_handles_labels()
+            line_legend = ax2.get_legend_handles_labels()
+            ax.legend(bars_legend[0] + line_legend[0], 
+                     bars_legend[1] + line_legend[1], 
+                     loc='upper left')
+        
         for patch in ax.patches:
             h = patch.get_height()
             if h > 0:
@@ -69,7 +88,11 @@ def main():
         ax.set_xticklabels(
             [d.strftime("%Y-%m-%d") for d in df.index], rotation=45, ha="right"
         )
-        plt.title(f"Weekly GitHub Contributions by Repo ({args.username})")
+        
+        title = f"Weekly GitHub Contributions by Repo ({args.username})"
+        if args.show_total:
+            title += " with Total"
+        plt.title(title)
         plt.xlabel("Start of the week (Monday)")
         plt.ylabel("Merged Commits")
         plt.tight_layout()
