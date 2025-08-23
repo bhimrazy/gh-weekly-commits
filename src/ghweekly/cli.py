@@ -64,7 +64,7 @@ def main():
         if args.show_total:
             total_contributions = df.sum(axis=1)
             ax2 = ax.twinx()
-            line = ax2.plot(range(len(df.index)), total_contributions, 
+            ax2.plot(range(len(df.index)), total_contributions, 
                           color='red', linewidth=2, marker='o', 
                           label='Total Contributions')
             ax2.set_ylabel('Total Contributions', color='red')
