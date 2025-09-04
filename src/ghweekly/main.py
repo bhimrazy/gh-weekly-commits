@@ -10,6 +10,7 @@ def fetch_weekly_commits(
     start: datetime,
     end: datetime,
     headers: Optional[Dict] = None,
+    include_committer: bool = False,
 ) -> pd.DataFrame:
     offset_start = (0 - start.weekday()) % 7
     first_monday = pd.Timestamp(start) + pd.Timedelta(days=offset_start)
@@ -24,8 +25,13 @@ def fetch_weekly_commits(
         short_name = full_repo.split("/")[-1]
         all_commits = {}  # Using dict to deduplicate by SHA
         
-        # Fetch commits where user is the author
-        for role in ["author", "committer"]:
+        # Determine which roles to check based on include_committer flag
+        roles = ["author"]
+        if include_committer:
+            roles.append("committer")
+        
+        # Fetch commits where user is the author and/or committer
+        for role in roles:
             page = 1
             while True:
                 resp = requests.get(

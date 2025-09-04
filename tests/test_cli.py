@@ -11,6 +11,7 @@ def test_cli_help():
     assert result.returncode == 0
     assert "usage:" in result.stdout
     assert "--username" in result.stdout
+    assert "--include-committer" in result.stdout
 
 
 def test_cli_runs(monkeypatch, tmp_path):
@@ -91,3 +92,27 @@ def test_cli_missing_args():
     )
     assert result.returncode != 0
     assert "usage:" in result.stderr.lower() or "error" in result.stderr.lower()
+
+def test_cli_include_committer_flag(monkeypatch):
+    """Test that the --include-committer flag is accepted."""
+    monkeypatch.setenv("GH_TOKEN", "dummy")
+    script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--username",
+            "testuser",
+            "--repos",
+            "org/repo1",
+            "--start",
+            "2025-01-01",
+            "--end",
+            "2025-05-01",
+            "--include-committer",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert "repo1" in result.stdout

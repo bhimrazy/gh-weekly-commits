@@ -62,7 +62,7 @@ def test_fetch_weekly_commits_no_commits(monkeypatch):
     assert (df == 0).all().all()
 
 def test_fetch_weekly_commits_with_merge_commits(monkeypatch):
-    """Test that commits where user is committer (but not author) are counted."""
+    """Test that commits where user is committer (but not author) are counted when include_committer=True."""
     
     def mock_get(*args, **kwargs):        
         # First call should be for author commits - return empty
@@ -87,11 +87,31 @@ def test_fetch_weekly_commits_with_merge_commits(monkeypatch):
             return MockResponse(status_code=200, json_data=[])
     
     monkeypatch.setattr("requests.get", mock_get)
-    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {})
+    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {}, include_committer=True)
     
     assert isinstance(df, pd.DataFrame)
     # Should have 1 commit counted from the merge commit
     assert df.sum().sum() == 1
+
+def test_fetch_weekly_commits_default_author_only(monkeypatch):
+    """Test that by default, only author commits are counted (not committer)."""
+    
+    def mock_get(*args, **kwargs):        
+        # Only author calls should be made, return empty
+        if "author" in kwargs["params"]:
+            return MockResponse(status_code=200, json_data=[])
+        # Committer calls should not be made in default mode
+        elif "committer" in kwargs["params"]:
+            # This should not be called in default mode
+            assert False, "Committer API should not be called when include_committer=False"
+        else:
+            return MockResponse(status_code=200, json_data=[])
+    
+    monkeypatch.setattr("requests.get", mock_get)
+    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {})
+    
+    assert isinstance(df, pd.DataFrame)
+    assert (df == 0).all().all()
 
 def test_fetch_weekly_commits_deduplication(monkeypatch):
     """Test that commits where user is both author and committer are not double-counted."""
@@ -112,7 +132,7 @@ def test_fetch_weekly_commits_deduplication(monkeypatch):
             return MockResponse(status_code=200, json_data=[])
     
     monkeypatch.setattr("requests.get", mock_get)
-    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {})
+    df = fetch_weekly_commits("user", ["org/repo"], datetime(2025,1,1), datetime(2025,2,1), {}, include_committer=True)
     
     assert isinstance(df, pd.DataFrame)
     # Should only count the commit once, not twice
