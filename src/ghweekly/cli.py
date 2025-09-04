@@ -29,6 +29,11 @@ def main():
         "--token", help="GitHub token (optional, for higher rate limits)"
     )
     parser.add_argument("--plot", action="store_true", help="Show plot")
+    parser.add_argument(
+        "--include-committer", 
+        action="store_true", 
+        help="Include commits where user is the committer (e.g., PR merge commits). Default: only authored commits"
+    )
 
     args = parser.parse_args()
 
@@ -49,6 +54,7 @@ def main():
         start=datetime.fromisoformat(args.start),
         end=datetime.fromisoformat(end_date),
         headers=headers,
+        include_committer=args.include_committer,
     )
 
     print(df)
