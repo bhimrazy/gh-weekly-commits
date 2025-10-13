@@ -72,15 +72,19 @@ def test_cli_default_start(monkeypatch):
         [
             sys.executable,
             str(script),
-            "--username", "testuser",
-            "--repos", "org/repo1",
-            "--end", "2025-05-01"
+            "--username",
+            "testuser",
+            "--repos",
+            "org/repo1",
+            "--end",
+            "2025-05-01",
         ],
         capture_output=True,
         text=True,
     )
     assert result.returncode == 0
     assert "repo1" in result.stdout
+
 
 def test_cli_missing_args():
     script = Path(__file__).parent.parent / "src" / "ghweekly" / "cli.py"
