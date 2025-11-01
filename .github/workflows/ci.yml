@@ -22,7 +22,7 @@ jobs:
         with:
           args: --verbose --no-progress --include-fragments "**/README.md"
           fail: true
-          
+
   test:
     strategy:
       matrix:
