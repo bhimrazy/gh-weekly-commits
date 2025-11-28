@@ -10,6 +10,7 @@ REPOS = [
     "Lightning-AI/litgpt",
     "Lightning-AI/LitModels",
     "Lightning-AI/pytorch-lightning",
+    "Lightning-AI/torchmetrics",
 ]
 
 GH_TOKEN = os.getenv("GH_TOKEN")
