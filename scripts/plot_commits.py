@@ -11,12 +11,13 @@ REPOS = [
     "Lightning-AI/LitModels",
     "Lightning-AI/pytorch-lightning",
     "Lightning-AI/torchmetrics",
+    "Lightning-AI/utilities",
 ]
 
 GH_TOKEN = os.getenv("GH_TOKEN")
 HEADERS = {"Authorization": f"token {GH_TOKEN}"} if GH_TOKEN else {}
 
-START = datetime(2025, 1, 1)
+START = datetime(2024, 5, 1)
 END = datetime.now()
 
 df = fetch_weekly_commits(USERNAME, REPOS, START, END, HEADERS)
