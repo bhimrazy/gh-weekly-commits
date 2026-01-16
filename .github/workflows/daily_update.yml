@@ -1,6 +1,9 @@
 name: Daily Update Weekly Commits
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "0 0 * * *" # Runs every day at 00:00 (midnight)
   workflow_dispatch:
