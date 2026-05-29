@@ -12,7 +12,7 @@ REPOS = [
     "Lightning-AI/pytorch-lightning",
     "Lightning-AI/torchmetrics",
     "Lightning-AI/utilities",
-    "ekzhu/datasketch"
+    "ekzhu/datasketch",
 ]
 
 GH_TOKEN = os.getenv("GH_TOKEN")
