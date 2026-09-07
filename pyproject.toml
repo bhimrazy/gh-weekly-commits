@@ -19,7 +19,6 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
 ]
 dependencies = [ "matplotlib", "pandas", "requests" ]
-
 urls.BugTracker = "https://github.com/bhimrazy/gh-weekly-commits/issues"
 urls.Documentation = "https://github.com/bhimrazy/gh-weekly-commits#readme"
 urls.Homepage = "https://github.com/bhimrazy/gh-weekly-commits"
